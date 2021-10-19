@@ -23,3 +23,5 @@ Open your terminal and run _eval_tsd.py_ in the "code" file. (**you need to modi
                      --sample_pred_file C:/Users/31906/Desktop/5222_project/data/predict_fold_5.txt \
                      --test_file C:/Users/31906/Desktop/5222_project/data/fold_5_modify.csv
 ```
+Then you can get results like this:  
+_F1 score:  0.6704417291328144_
