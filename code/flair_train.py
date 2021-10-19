@@ -39,15 +39,15 @@ tag_type = 'ner'
 
 corpus: Corpus = ColumnCorpus(data_folder, 
                                 columns, 
-                                train_file='fold_1.txt',
-                                dev_file='fold_2.txt',
-                                test_file = 'fold_2.txt')
+                                train_file='fold_1234.txt',
+                                dev_file='fold_5.txt',
+                                test_file = None)
 
 tag_dictionary = corpus.make_tag_dictionary(tag_type=tag_type)
 print(tag_dictionary)
 
 embedding_types: List[TokenEmbeddings] = [
-     TransformerWordEmbeddings('bert-base-uncased',fine_tune = True),
+     TransformerWordEmbeddings('bert-base-uncased', fine_tune = True),
     #  CharacterEmbeddings()
  ]
 
@@ -66,17 +66,9 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
 # initialize trainer with AdamW optimizer
 trainer: ModelTrainer = ModelTrainer(tagger, corpus, optimizer=torch.optim.AdamW)
 
-# trainer.train(output_folder, learning_rate=0.01,
-#               mini_batch_size=64,
-#               max_epochs=150)
-#from pathlib import Path
-
-# Load from checkpoint
-#checkpoint = '/media/data_dump/sreyan/semeval/output_final_xlnet_character/checkpoint.pt'
-#trainer = ModelTrainer.load_checkpoint(checkpoint, corpus)
-
+# train the model
 trainer.train(output_folder, 
-              learning_rate=2e-4,
+              learning_rate=2e-5,
               mini_batch_size=8,
               max_epochs=20,
               patience=3,
