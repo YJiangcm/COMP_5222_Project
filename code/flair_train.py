@@ -47,7 +47,7 @@ tag_dictionary = corpus.make_tag_dictionary(tag_type=tag_type)
 print(tag_dictionary)
 
 embedding_types: List[TokenEmbeddings] = [
-     TransformerWordEmbeddings('bert-base-uncased', fine_tune = True),
+     TransformerWordEmbeddings('bert-base-uncased', fine_tune=True),
     #  CharacterEmbeddings()
  ]
 
