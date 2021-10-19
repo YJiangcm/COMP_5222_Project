@@ -17,7 +17,9 @@ Here you can change the model structure flexibly.
 (refer to the tutorial of [flair](https://github.com/flairNLP/flair)).
 
 ### 3. Compute F1 score:
-Open your terminal and run _eval_tsd.py_ in the "code" file. (**you need to modify data_path according to your situation**)
+Open your terminal and run _eval_tsd.py_ in the "code" file. (**you need to modify data_path according to your situation**)  
+---------flair_pred_file is the path of file that your model predicts.  
+---------sample_pred_file is the path where you want to save the standard prediction.
 ```
 ! python eval_tsd.py --flair_pred_file C:/Users/31906/Desktop/5222_project/data/bert-bio-fold_5.txt \
                      --sample_pred_file C:/Users/31906/Desktop/5222_project/data/predict_fold_5.txt \
