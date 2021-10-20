@@ -6,18 +6,17 @@ This is the repository of COMP 5222 group project, our group number is 16.
 ### 0. Download all files in this repository.
 
 ### 1. Prepare the train and dev data:  
-Open your terminal and run _DataProcess.py_ in the "code" file. (**you need to modify data_path according to your situation**)
+Open your terminal and run _DataProcess.py_ in the "code" file. 
 ```
-! python DataProcess.py --data_path C:/Users/31906/Desktop/5222_project/data
+! python DataProcess.py --data_path ../data
 ```
 
 ### 2. Train the model:  
-Open your terminal and run _flair_train.py_ in the "code" file. (**you need to modify data_path according to your situation**)  
-Here you can change the model structure flexibly.   
+Open your terminal and run _flair_train.py_ in the "code" file. (**Here you can change the model structure flexibly**)   
 (refer to the tutorial of [flair](https://github.com/flairNLP/flair)).
 ```
-! python flair_train.py --input ./data \
-              --output ./output \
+! python flair_train.py --input ../data \
+              --output ../output \
               --gpu 'cuda' \
               --train_file 'fold_1234.txt' \
               --dev_file 'fold_5.txt' \
@@ -33,8 +32,8 @@ Open your terminal and run _predict.py_ in the "code" file. (**you need to modif
 ---------predict_file is the path of file that your model predicts.  
 ---------sample_pred_file is the path where you want to save the standard prediction.
 ```
-! python predict.py --input ./data \
-              --output ./output \
+! python predict.py --input ../data \
+              --output ../output \
               --gpu 'cuda' \
               --train_file 'fold_1234.txt' \
               --dev_file 'fold_5.txt' \
