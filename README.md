@@ -6,13 +6,13 @@ This is the repository of COMP 5222 group project, our group number is 16.
 ### 0. Download all files in this repository.
 
 ### 1. Prepare the train and dev data:  
-Open your terminal and run _DataProcess.py_ in the "code" file. 
+Open your terminal, navigate to the "code" folder and run _DataProcess.py_. 
 ```
 ! python DataProcess.py --data_path ../data
 ```
 
 ### 2. Train the model:  
-Open your terminal and run _flair_train.py_ in the "code" file.   
+Open your terminal and run _flair_train.py_  in the "code" folder.   
 **Here you can change the model structure flexibly.** (refer to the tutorial of [flair](https://github.com/flairNLP/flair)).
 ```
 ! python flair_train.py --input ../data \
@@ -28,7 +28,7 @@ Open your terminal and run _flair_train.py_ in the "code" file.
 ```
 
 ### 3. Make prediction and compute F1 score:
-Open your terminal and run _predict.py_ in the "code" file. (**you need to modify data_path according to your situation**)  
+Open your terminal and run _predict.py_ in the "code" folder. (**you need to modify data_path according to your situation**)  
 ---------predict_file: the path of file that your model predicts.  
 ---------sample_pred_file: the path where you want to save the standard prediction.
 ```
