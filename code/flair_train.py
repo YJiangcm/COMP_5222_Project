@@ -1,6 +1,13 @@
-import flair
 import torch
 import argparse
+import flair
+from typing import List
+from flair.models import SequenceTagger
+from flair.data import Corpus
+from flair.datasets import ColumnCorpus
+from flair.trainers import ModelTrainer
+from flair.embeddings import *
+from torch.optim.lr_scheduler import OneCycleLR
 
 parser = argparse.ArgumentParser(description='Train flair model')
 parser.add_argument('--input', '-i',
@@ -24,19 +31,7 @@ args = parser.parse_args()
 input_folder=args.input
 output_folder=args.output
 gpu_type=args.gpu
-
-
 flair.device = torch.device(gpu_type)
-from typing import List
-from flair.data import Sentence
-from flair.models import SequenceTagger
-from tqdm import tqdm
-from flair.data import Corpus
-from flair.datasets import ColumnCorpus
-from flair.trainers import ModelTrainer
-from flair.models import SequenceTagger
-from flair.embeddings import *
-from torch.optim.lr_scheduler import OneCycleLR
 
 
 # Change this line if you have POS tags in your data, eg.- {0: 'text', 1:'pos', 2:'ner'}
