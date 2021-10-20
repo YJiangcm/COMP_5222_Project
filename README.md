@@ -11,7 +11,7 @@ Open your terminal, navigate to the "code" folder and run _DataProcess.py_.
 ! python DataProcess.py --data_path ../data
 ```
 
-### 2. Train the model:  
+### 2. Train the model (need a >=10 GB GPU server):  
 Open your terminal and run _flair_train.py_  in the "code" folder.   
 **Here you can change the model structure flexibly.** (refer to the tutorial of [flair](https://github.com/flairNLP/flair)).
 ```
