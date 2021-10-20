@@ -29,8 +29,8 @@ Open your terminal and run _flair_train.py_ in the "code" file.
 
 ### 3. Make prediction and compute F1 score:
 Open your terminal and run _predict.py_ in the "code" file. (**you need to modify data_path according to your situation**)  
----------predict_file is the path of file that your model predicts.  
----------sample_pred_file is the path where you want to save the standard prediction.
+---------predict_file: the path of file that your model predicts.  
+---------sample_pred_file: the path where you want to save the standard prediction.
 ```
 ! python predict.py --input ../data \
               --output ../output \
