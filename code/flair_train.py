@@ -10,17 +10,23 @@ from flair.embeddings import *
 from torch.optim.lr_scheduler import OneCycleLR
 
 parser = argparse.ArgumentParser(description='Train flair model')
-parser.add_argument('--input', '-i',
-                        help='Name of the input folder containing train, dev and test files')
-parser.add_argument('--output', '-o',
-                        help='Name of the output folder')
-parser.add_argument('--gpu', '-g',
-                        help='Use gpu/cpu, put "cuda" if gpu and "cpu" if cpu')
+
+# parameters of data
+parser.add_argument('--input', '-i', help='Name of the input folder containing train, dev and test files')
+parser.add_argument('--output', '-o', help='Name of the output folder')
+parser.add_argument('--gpu', '-g', help='Use gpu/cpu, put "cuda" if gpu and "cpu" if cpu')
 parser.add_argument('--train_file')
 parser.add_argument('--dev_file')
 parser.add_argument('--test_file', default=None)
+
+# parameters of model
 parser.add_argument('--transformer')
 parser.add_argument('--use_crf', action='store_true', help='if use crf, default False')
+parser.add_argument('--use_rnn', action='store_true', help='if use rnn, default False')
+parser.add_argument('--rnn_layers', type=int, default=1)
+parser.add_argument('--hidden_size', type=int, default=256)
+
+# parameters of training
 parser.add_argument('--learning_rate', type=float, default=2e-5)
 parser.add_argument('--mini_batch_size', type=int, default=8)
 parser.add_argument('--max_epochs', type=int, default=20)
@@ -52,19 +58,40 @@ print(tag_dictionary)
 
 embedding_types: List[TokenEmbeddings] = [
      TransformerWordEmbeddings(args.transformer, fine_tune=True),
-    #  CharacterEmbeddings()
+#      FlairEmbeddings('news-forward'),
+#      FlairEmbeddings('news-backward'),
  ]
 
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 
-# initialize bare-bones sequence tagger (no CRF, no RNN, no reprojection)
-tagger: SequenceTagger = SequenceTagger(hidden_size=256,
-                                        embeddings=embeddings,
+# initialize bare-bones sequence tagger
+        """
+        Initializes a SequenceTagger
+        :param hidden_size: number of hidden states in RNN
+        :param embeddings: word embeddings used in tagger
+        :param tag_dictionary: dictionary of tags you want to predict
+        :param tag_type: string identifier for tag type
+        :param use_crf: if True use CRF decoder, else project directly to tag space
+        :param use_rnn: if True use RNN layer, otherwise use word embeddings directly
+        :param rnn_layers: number of RNN layers
+        :param dropout: dropout probability
+        :param word_dropout: word dropout probability
+        :param reproject_embeddings: if True, adds trainable linear map on top of embedding layer. If False, no map.
+        If you set this to an integer, you can control the dimensionality of the reprojection layer
+        :param locked_dropout: locked dropout probability
+        :param train_initial_hidden_state: if True, trains initial hidden state of RNN
+        :param beta: Parameter for F-beta score for evaluation and training annealing
+        :param loss_weights: Dictionary of weights for classes (tags) for the loss function
+        (if any tag's weight is unspecified it will default to 1.0)
+        """
+tagger: SequenceTagger = SequenceTagger(embeddings=embeddings, 
                                         tag_dictionary=tag_dictionary,
                                         tag_type=tag_type,
                                         use_crf=args.use_crf,
-                                        use_rnn=False,
+                                        use_rnn=args.use_rnn, 
+                                        rnn_layers=args.rnn_layers, 
+                                        hidden_size=rnn.hidden_size,
                                         reproject_embeddings=False,)
 
 # initialize trainer with AdamW optimizer
