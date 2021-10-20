@@ -12,7 +12,7 @@ Open your terminal and run _DataProcess.py_ in the "code" file.
 ```
 
 ### 2. Train the model:  
-Open your terminal and run _flair_train.py_ in the "code" file. (**Here you can change the model structure flexibly**)   
+Open your terminal and run _flair_train.py_ in the "code" file. **Here you can change the model structure flexibly**  
 (refer to the tutorial of [flair](https://github.com/flairNLP/flair)).
 ```
 ! python flair_train.py --input ../data \
