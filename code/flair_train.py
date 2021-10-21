@@ -91,7 +91,7 @@ tagger: SequenceTagger = SequenceTagger(embeddings=embeddings,
                                         use_crf=args.use_crf,
                                         use_rnn=args.use_rnn, 
                                         rnn_layers=args.rnn_layers, 
-                                        hidden_size=rnn.hidden_size,
+                                        hidden_size=args.hidden_size,
                                         reproject_embeddings=False,)
 
 # initialize trainer with AdamW optimizer
