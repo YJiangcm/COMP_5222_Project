@@ -66,7 +66,7 @@ embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 
 # initialize bare-bones sequence tagger
-        """
+'''
         Initializes a SequenceTagger
         :param hidden_size: number of hidden states in RNN
         :param embeddings: word embeddings used in tagger
@@ -84,7 +84,7 @@ embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
         :param beta: Parameter for F-beta score for evaluation and training annealing
         :param loss_weights: Dictionary of weights for classes (tags) for the loss function
         (if any tag's weight is unspecified it will default to 1.0)
-        """
+'''
 tagger: SequenceTagger = SequenceTagger(embeddings=embeddings, 
                                         tag_dictionary=tag_dictionary,
                                         tag_type=tag_type,
