@@ -40,8 +40,8 @@ Open your terminal and run _predict.py_ in the "code" folder. (**you need to mod
               --dev_file 'fold_5_dev.txt' \
               --test_file 'fold_5_test.txt' \
               --checkpoint 'best-model.pt' \
-              --predict_file 'bert-bio-fold_5.txt' \
-              --sample_pred_file 'fold_5_predict.txt'
+              --predict_file 'bert_fold_5_test.txt' \
+              --sample_pred_file 'fold_5_test_predict.txt'
 ```
 Then you can get a result like this:  
 _F1 score:  0.6704417291328144_
