@@ -19,7 +19,8 @@ Open your terminal and run _flair_train.py_  in the "code" folder.
               --output ../output \
               --gpu 'cuda' \
               --train_file 'fold_1234.txt' \
-              --dev_file 'fold_5.txt' \
+              --dev_file 'fold_5_dev.txt' \
+              --test_file 'fold_5_test.txt' \
               --transformer 'bert-base-uncased' \
               --learning_rate 2e-5 \
               --mini_batch_size 8 \
@@ -36,8 +37,8 @@ Open your terminal and run _predict.py_ in the "code" folder. (**you need to mod
               --output ../output \
               --gpu 'cuda' \
               --train_file 'fold_1234.txt' \
-              --dev_file 'fold_5.txt' \
-              --test_file 'fold_5.txt' \
+              --dev_file 'fold_5_dev.txt' \
+              --test_file 'fold_5_test.txt' \
               --checkpoint 'best-model.pt' \
               --predict_file 'bert-bio-fold_5.txt' \
               --sample_pred_file 'fold_5_predict.txt'
