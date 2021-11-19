@@ -1,5 +1,5 @@
 # COMP_5222_Project
-This is the repository of COMP 5222 group project, our group number is 16.
+This is the repository of COMP 5222 group project, our group number is 13.
 
 ## **How to run:**
 
@@ -37,7 +37,7 @@ Open your terminal and run _predict.py_ in the "code" folder. (**you need to mod
               --output ../output \
               --gpu 'cuda' \
               --train_file 'fold_1234.txt' \
-              --dev_file 'fold_5_dev.txt' \
+              --dev_file 'fold_5_test.txt' \
               --test_file 'fold_5_test.txt' \
               --checkpoint 'best-model.pt' \
               --predict_file 'bert_fold_5_test.txt' \
