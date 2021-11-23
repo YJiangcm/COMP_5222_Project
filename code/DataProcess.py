@@ -17,13 +17,15 @@ def string_split(string):
         for i in range(len(string)):
             new_string.append(string[i])
             if i != len(string)-1:
-                new_string.append('@')
+                new_string.append('|')
         return new_string
 
 
 def text_split(text):
     # split a text
     text = re.sub(r'\n', '.', text)
+    text = re.sub(r'\t', '.', text)
+    text = re.sub(r'\xa0', ' ', text)
     return sum([string_split(i) for i in text.split(" ")], [])
 
 
@@ -81,10 +83,10 @@ def text2BIO(new_span, text):
             else:
                 end_delete = False
             if i > 0 and len(new_text_0) > 0 and new_text_0[0] in "!“\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\n" and not begin_delete:
-                bio.extend([['@', 'O']])
+                bio.extend([['|', 'O']])
             bio.extend(BIO_nontoxic(new_text_0))
             if len(new_text_0) > 0 and new_text_0[-1] in "!“\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\n" and not end_delete:
-                bio.extend([['@', 'O']])
+                bio.extend([['|', 'O']])
                 
         bio.extend(toxic_bio)
         
@@ -96,24 +98,45 @@ def text2BIO(new_span, text):
         else:
             beg_delete = False
         if len(new_text_1) > 0 and new_text_1[0] in "!“\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\n" and not beg_delete:
-            bio.extend([['@', 'O']])
+            bio.extend([['|', 'O']])
         bio.extend(BIO_nontoxic(new_text_1))
     else:
         bio = BIO_nontoxic(text)
         
-    convert_space_bio = []
-    for i in bio:
-        if i[0] == '':
-            if i[1] == 'B':
-                convert_space_bio.extend([['@', 'B'], ['.', 'B']])
-            elif i[1] == 'I':
-                convert_space_bio.extend([['@', 'I'], ['.', 'I']])
-            else:
-                convert_space_bio.extend([['@', 'O'], ['.', 'O']])
-        else:
-            convert_space_bio.append(i)
+    # convert_space_bio = []
+    # for i in bio:
+    #     if i[0] == '':
+    #         if i[1] == 'B':
+    #             convert_space_bio.extend([['|', 'B'], ['.', 'B']])
+    #         elif i[1] == 'I':
+    #             convert_space_bio.extend([['|', 'I'], ['.', 'I']])
+    #         else:
+    #             convert_space_bio.extend([['|', 'O'], ['.', 'O']])
+    #     else:
+    #         convert_space_bio.append(i)
                 
-    return convert_space_bio
+    return bio
+
+
+def simple_BIO(bios):
+    simple_bios = []
+    for i in bios:
+        if i[0] != '' and i[0] != '|':
+            simple_bios.append(i)
+    return simple_bios
+
+
+def reference(bios, simple_bios):
+    new_bios = []
+    idx = 0
+    for i in range(len(bios)):
+        if bios[i][0] != '' and bios[i][0] != '|':
+            new_bios.append(simple_bios[idx])
+            idx += 1
+        else:
+            new_bios.append([bios[i][0], 'O'])
+    assert len(new_bios) == len(bios)
+    return new_bios
     
     
 def BIO2idx(bios):
@@ -121,17 +144,17 @@ def BIO2idx(bios):
     idx = []
     count = 0
     for i in range(len(bios)):
-        if bios[i][0] != '@':
+        if bios[i][0] != '|':
             
             if bios[i][1] == "B":
                 idx.extend(list(range(count, count + len(bios[i][0]))))
             if bios[i][1] == "I":
-                if bios[i-1][0]!='@':
+                if bios[i-1][0]!='|':
                     idx.extend(list(range(count-1, count + len(bios[i][0]))))
                 else:
                     idx.extend(list(range(count, count + len(bios[i][0]))))
         
-            if i != len(bios)-1 and bios[i+1][0]!='@':
+            if i != len(bios)-1 and bios[i+1][0]!='|':
                 count += (len(bios[i][0])+1)
             else:
                 count += len(bios[i][0])
@@ -149,7 +172,7 @@ def delete_error_data(csv_file_name, modified_csv_name):
     train = train[train.if_correct_span == 1]
     
     # delete examples whose bio length is larger than 500 (because the max sequence length of transformers is 512)
-    train['seq_length'] = train.apply(lambda x: len(text2BIO(x.new_span, x.text)), axis=1)
+    train['seq_length'] = train.apply(lambda x: len(simple_BIO(text2BIO(x.new_span, x.text))), axis=1)
     train = train[train.seq_length <= 500].reset_index(drop=True)
 
     # detect error examples
@@ -161,7 +184,7 @@ def delete_error_data(csv_file_name, modified_csv_name):
         if BIO2idx(x) != train.spans[i]:
             error_idx.append(i)
             
-    print("Number of examples in {:}: {:}".format(csv_file_name, len(train)))
+    print("\nNumber of examples in {:}: {:}".format(csv_file_name, len(train)))
     print("Detect number of error examples: ", len(error_idx))
     print("Nnumber of correct examples: ", len(train) - len(error_idx))
     
@@ -179,8 +202,7 @@ def generate_BIO_txt(csv_file_name, txt_file_name):
     for i in range(len(train)):
         text = train.text[i]
         new_span = train.new_span[i]
-        BIO = text2BIO(new_span, text)
-        # print(BIO)
+        BIO = simple_BIO(text2BIO(new_span, text))
         for j in BIO:
             f.write(j[0] + '\t' + j[1] + '\n')
         f.write('\n')
@@ -206,7 +228,7 @@ def txt2BIO(txt_file_name):
         else:
             break
     f.close()
-    print("number of examples in txt: {:}\n".format(len(bios)))
+    print("number of examples in txt: {:}".format(len(bios)))
     return bios
         
             
@@ -217,14 +239,22 @@ def merge_files(txts, output_file):
         for i, line in enumerate(lines):
             writer.write(line)
     writer.close()
-    print("create merged file: ", output_file)
+    print("\ncreate merged file: ", output_file)
 
 
-def flair_pred2sample_pred(flair_pred_file, sample_pred_file):
-    bios = txt2BIO(flair_pred_file)
+def flair_pred2sample_pred(csv_file_name, flair_pred_file, sample_pred_file):
+    train = pd.read_csv(csv_file_name)
+    train.spans = train.spans.apply(lambda x: literal_eval(x))
+    train['new_span'] = train.spans.apply(lambda x: create_new_span(x))
+    bios = []
+    for i in range(len(train)):
+        bios.append(text2BIO(train.new_span[i], train.text[i]))
+    simple_bios = txt2BIO(flair_pred_file)
+    assert len(bios) == len(simple_bios)
+    
     f = open(sample_pred_file, 'w', encoding='utf-8')
-    for bio in bios:
-        f.write(str(BIO2idx(bio)) + '\n')
+    for i in range(len(simple_bios)):
+        f.write(str(BIO2idx(reference(bios[i], simple_bios[i]))) + '\n')
     f.close()
     print("create sample prediction file: ", sample_pred_file)
 
@@ -243,7 +273,18 @@ if __name__ == "__main__":
     
     for i in range(1, 6):
         delete_error_data(os.path.join(data_path, "fold_"+str(i)+".csv"), os.path.join(data_path, "fold_"+str(i)+"_modify.csv"))
+        
+        df = pd.read_csv(os.path.join(data_path, "fold_"+str(i)+"_modify.csv"))
+        dev = df.sample(frac=0.5, random_state=0)
+        test = df.drop(index=dev.index)
+        dev = dev.reset_index(drop=True)
+        test = test.reset_index(drop=True)
+        dev.to_csv(os.path.join(data_path, "fold_"+str(i)+"_dev_modify.csv"), index=False)
+        test.to_csv(os.path.join(data_path, "fold_"+str(i)+"_test_modify.csv"), index=False)
+        
         generate_BIO_txt(os.path.join(data_path, "fold_"+str(i)+"_modify.csv"), os.path.join(data_path, "fold_"+str(i)+".txt"))
+        generate_BIO_txt(os.path.join(data_path, "fold_"+str(i)+"_dev_modify.csv"), os.path.join(data_path, "fold_"+str(i)+"_dev.txt"))
+        generate_BIO_txt(os.path.join(data_path, "fold_"+str(i)+"_test_modify.csv"), os.path.join(data_path, "fold_"+str(i)+"_test.txt"))
     
     for i in range(1, 6):
         # 5-fold cross validation
@@ -251,4 +292,3 @@ if __name__ == "__main__":
         lists.remove(i)
         txts = [os.path.join(data_path, "fold_"+str(j)+".txt") for j in lists]
         merge_files(txts, os.path.join(data_path, "fold_"+"".join(str(i) for i in lists)+".txt"))    
-        
