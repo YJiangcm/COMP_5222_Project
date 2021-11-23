@@ -56,5 +56,5 @@ with open(os.path.join(args.output, args.predict_file), 'w',encoding="utf-8") as
         f.write("\n")
         
 # compute the F1 score
-flair_pred2sample_pred(os.path.join(args.output, args.predict_file), os.path.join(args.output, args.sample_pred_file))
+flair_pred2sample_pred(os.path.join(args.input, args.test_file.replace('.txt', '_modify.csv')), os.path.join(args.output, args.predict_file), os.path.join(args.output, args.sample_pred_file))
 evaluate(os.path.join(args.output, args.sample_pred_file), os.path.join(args.input, args.test_file.replace('.txt', '_modify.csv')))
